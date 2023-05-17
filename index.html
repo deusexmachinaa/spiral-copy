@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Spiral Animation</title>
+    <style>
+        body {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+            -webkit-font-smoothing: antialiased;
+            font-smoothing: antialiased;
+            font-family: "Roboto", sans-serif;
+            font-weight: 400;
+            overflow: hidden;
+        }
+
+        #contents {
+            display: none;
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 200;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        #spiral-con {
+            pointer-events: none;
+        }
+
+        #spiral-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            margin: -265px 0 0 -275px;
+            z-index: 1;
+        }
+
+        #spiral-home {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            font-size: 20px;
+            width: 10px;
+            height: 10px;
+            margin: 0;
+            font-weight: 700;
+            color: #fff;
+            z-index: 3;
+        }
+
+        #spiral-home>p {
+            transform-origin: 100% 50%;
+            transition: transform 2s cubic-bezier(0.445, 0.05, 0.55, 0.95);
+            width: 192px;
+            height: 48px;
+            position: absolute;
+            left: -192px;
+            top: -24px;
+        }
+
+        #spiral-home>p>div {
+            width: 48px;
+            height: 48px;
+            transform: rotate(-95deg);
+            font-size: 36px;
+            text-align: center;
+        }
+
+        .spiral-rotate {
+            animation: rotate-spiral 10s linear 0s infinite;
+        }
+
+        .spiral-rotate-pause {
+            -moz-animation-play-state: paused;
+            -webkit-animation-play-state: paused;
+            -ms-animation-play-state: paused;
+            animation-play-state: paused;
+        }
+
+        @-webkit-keyframes rotate-spiral {
+            0% {
+                -webkit-transform: rotate(0deg);
+            }
+
+            100% {
+                -webkit-transform: rotate(360deg);
+            }
+        }
+
+        @-moz-keyframes rotate-spiral {
+            0% {
+                -moz-transform: rotate(0deg);
+            }
+
+            100% {
+                -moz-transform: rotate(360deg);
+            }
+        }
+
+        @-ms-keyframes rotate-spiral {
+            0% {
+                -ms-transform: rotate(0deg);
+            }
+
+            100% {
+                -ms-transform: rotate(360deg);
+            }
+        }
+
+        @keyframes rotate-spiral {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="contents" style="display: block; background-color: rgb(255, 174, 0);">
+        <div id="spiral-con">
+            <div id="spiral-circle"></div>
+            <div id="spiral-home">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var Spiral = Spiral || (function () {
+            function startRotation() {
+                homeElement.classList.add("spiral-rotate");
+            }
+            var homeElement,
+                layers = 8,
+                totalElements,
+                textArrayLength,
+                textArray,
+                totalItems;
+            return {
+                init: function (itemIndex) {
+                    homeElement = document.getElementById("spiral-home");
+                    totalItems = 40 * layers;
+                    textArray = "ROBERTSMITHSONAMERICANARTISTSMITHSONISMOSTWELLKNOWNFORHISPROVOCATIVEEARTHWORKTHESPIRALJETTYHEGAINEDINTERNATIONALRECOGNITIONFORHISGROUNDBREAKINGARTWHICHWASNOTLIMITEDBYGENREORMATERIALSASWELLASFORHISCRITICALWRITINGSTHATCHALLENGEDTRADITIONALCATEGORIESOFARTBETWEENTHEYEARSOF19641973".split("");
+                    textArrayLength = textArray.length;
+                    totalElements = [];
+                    for (layerIndex = 0; layerIndex < layers; layerIndex++) {
+                        for (itemIndex = 0; 40 > itemIndex; itemIndex++) {
+                            var elementIndex = 40 - itemIndex + 40 * layerIndex - 1;
+                            var textIndex = Math.min(elementIndex - 1, textArrayLength);
+                            var item = new SpiralItem(layerIndex, itemIndex, 40, 3, textArray[textIndex]);
+                            homeElement.appendChild(item.element);
+                            totalElements[elementIndex] = item;
+                        }
+                    }
+                },
+                start: function () {
+                    setTimeout(function () {
+                        var elementIndex;
+                        for (elementIndex = 0; elementIndex < totalItems; elementIndex++) {
+                            var currentElement = totalElements[elementIndex];
+                            currentElement.start();
+                        }
+                    }, 2000);
+                    setTimeout(startRotation, 3000);
+                },
+            };
+        })();
+
+        function SpiralItem(layerIndex, itemIndex, totalItems, layers, text) {
+            this.element = document.createElement("p");
+            this.div = document.createElement("div");
+            this.div.innerHTML = text || '';
+            this.element.appendChild(this.div);
+            this.rotate = (itemIndex + totalItems * (layers - 1 - layerIndex)) * -(360 / totalItems) - 90;
+            this.scale = 1 - (itemIndex + totalItems * (layers - 1 - layerIndex)) / totalItems / layers;
+            this.scale *= this.scale;
+            this.element.style.transform = "rotate(0deg) scale(0)";
+            this.element.style.transition = 'transform 3s';
+        }
+
+        SpiralItem.prototype.start = function () {
+            this.element.style.transform = "rotate(" + this.rotate + "deg) scale(" + this.scale + ")";
+        };
+
+        window.onload = function () {
+            Spiral.init(document.getElementById('spiral-con'));
+            Spiral.start();
+        }
+    </script>
+
+</body>
+
+</html>
