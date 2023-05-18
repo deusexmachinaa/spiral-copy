@@ -1,7 +1,4 @@
 # spiral-copy
-https://spiral-copy-mk3.pages.dev/
-
-
 https://fff.cmiscm.com/#!/section/spiral 의 카피입니다
 
 개인적으로 마음에 드는 작품이라 한번 재현 해보고싶었습니다.
